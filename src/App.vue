@@ -4,9 +4,9 @@ import Hello from '@/components/Hello.vue'
 </script>
 
 <template>
-  <header class="mb-40 ml-50">
-    <Hello />
-  </header>
+  <div class="h-screen bg-white w-4/5 m-auto rounded-xl shadow-xl mt-14">
+    <h1>Hello</h1>
+  </div>
 
   <RouterView />
 </template>
