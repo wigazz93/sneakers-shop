@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-white mt-2 relative border border-slate-100 rounded-xl p-8 cursor-pointer transition hover:shadow-xl hover:transform hover:-translate-y-2"
+    class="bg-white flex flex-col justify-between mt-2 relative border border-slate-100 rounded-xl p-8 cursor-pointer transition hover:shadow-xl hover:transform hover:-translate-y-2"
   >
     <div>
       <img
@@ -9,7 +9,7 @@
         class="absolute top-8 left-8"
       />
     </div>
-    <img :src="imgUrl" alt="Sneaker" />
+    <img :src="imageUrl" alt="Sneaker" />
     <p>{{ title }}</p>
     <div class="flex justify-between mt-5">
       <div class="flex flex-col gap-2">
@@ -23,9 +23,8 @@
 
 <script setup>
 defineProps({
-  imgUrl: {
-    type: String,
-    required: true
+  imageUrl: {
+    type: String
   },
   title: {
     type: String,
@@ -36,7 +35,8 @@ defineProps({
     required: true
   },
   isFavorite: {
-    type: Boolean
+    type: Boolean,
+    required: false
   },
   isAdded: {
     type: Boolean,
