@@ -4,7 +4,8 @@
   >
     <div>
       <img
-        :src="isFavorite ? '/like-1.svg' : '/like-2.svg'"
+        @click="clickFavor"
+        :src="isFavorite ? '/like-2.svg' : '/like-1.svg'"
         alt="Favorite"
         class="absolute top-8 left-8"
       />
@@ -22,7 +23,10 @@
 </template>
 
 <script setup>
-defineProps({
+const props = defineProps({
+  key: {
+    type: Number
+  },
   imageUrl: {
     type: String
   },
@@ -36,11 +40,14 @@ defineProps({
   },
   isFavorite: {
     type: Boolean,
-    required: false
+    default: false
   },
   isAdded: {
     type: Boolean,
     default: false
+  },
+  clickFavor: {
+    type: Function
   }
 })
 </script>
