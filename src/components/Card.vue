@@ -17,7 +17,7 @@
         <span class="text-slate-400">Цена:</span>
         <span class="font-bold">{{ price }}руб.</span>
       </div>
-      <img :src="!isAdded ? '/plus.svg' : '/checked.svg'" alt="Plus" />
+      <img @click="clickAdd" :src="!isAdded ? '/plus.svg' : '/checked.svg'" alt="Plus" />
     </div>
   </div>
 </template>
@@ -47,6 +47,9 @@ const props = defineProps({
     default: false
   },
   clickFavor: {
+    type: Function
+  },
+  clickAdd: {
     type: Function
   }
 })

@@ -3,14 +3,45 @@ import { RouterLink, RouterView } from 'vue-router'
 import Header from '@/components/Header.vue'
 import CardList from '@/components/CardList.vue'
 import Drawer from '@/components/Drawer.vue'
-import { provide, onMounted, reactive, ref, watch } from 'vue'
+import { computed, provide, onMounted, reactive, ref, watch } from 'vue'
 import axios from 'axios'
 
+const stateDrawer = ref(false)
+const closeDrawer = () => {
+  stateDrawer.value = false
+}
+const openDrawer = () => {
+  stateDrawer.value = true
+}
+
+const cart = ref([])
 const items = ref([])
 const filters = reactive({
   sortBy: 'title',
-  searchQuery: ''
+  searchQuery: '',
 })
+const isCreateOrder = ref(false)
+const totalPrice = computed(() => cart.value.reduce((acc, item) => acc + item.price, 0))
+
+const vatPrice = computed(() => (totalPrice.value * 0.05).toFixed(1))
+
+const addToCart = (item) => {
+  cart.value.push(item)
+  item.isAdded = true
+}
+
+const removeFromCart = (item) => {
+  cart.value.splice(cart.value.indexOf(item), 1)
+  item.isAdded = false
+}
+
+const clickAddPlus = (item) => {
+  if (!item.isAdded) {
+    addToCart(item)
+  } else {
+    removeFromCart(item)
+  }
+}
 
 const onChangeSelect = (e) => {
   filters.sortBy = e.target.value
@@ -31,7 +62,7 @@ const fetchFavorites = async () => {
       return {
         ...item,
         isFavorite: true,
-        favoriteId: favItem.id
+        favoriteId: favItem.id,
       }
     })
   } catch (error) {
@@ -41,7 +72,7 @@ const fetchFavorites = async () => {
 const addToFavorite = async (item) => {
   try {
     const obj = {
-      parentId: item.id
+      parentId: item.id,
     }
     if (!item.isFavorite) {
       item.isFavorite = true
@@ -66,30 +97,80 @@ const fetchItems = async () => {
     }
 
     const { data } = await axios.get('https://df79a2a27ce0982b.mokky.dev/items', {
-      params
+      params,
     })
     items.value = data.map((obj) => ({
       ...obj,
       isAdded: false,
-      isFavorite: false
+      isFavorite: false,
     }))
   } catch (error) {
     console.log(error.stack)
   }
 }
+const createOrder = async () => {
+  try {
+    isCreateOrder.value = true
+    const { data } = await axios.post('https://df79a2a27ce0982b.mokky.dev/orders', {
+      items: cart.value,
+      totalPrice: totalPrice.value,
+    })
+    cart.value = []
+    return data
+  } catch (error) {
+    console.log(error)
+  } finally {
+    isCreateOrder.value = false
+  }
+}
 
 onMounted(async () => {
+  cart.value = JSON.parse(localStorage.getItem('cart')) || []
   await fetchItems()
   await fetchFavorites()
+  items.value = items.value.map((item) => ({
+    ...item,
+    isAdded: cart.value.some((cartItem) => cartItem.id === item.id),
+  }))
 })
 
 watch(filters, fetchItems)
+
+watch(cart, () => {
+  items.value = items.value.map((item) => ({
+    ...item,
+    isAdded: false,
+  }))
+})
+watch(
+  cart,
+  () => {
+    localStorage.setItem('cart', JSON.stringify(cart.value))
+  },
+  { deep: true },
+)
+
+provide('cart', {
+  cart,
+  closeDrawer,
+  openDrawer,
+  addToCart,
+  removeFromCart,
+  totalPrice,
+  vatPrice,
+})
 </script>
 
 <template>
-  <!-- <Drawer /> -->
+  <Drawer
+    v-if="stateDrawer"
+    :isCreateOrder="isCreateOrder"
+    :totalPrice="totalPrice"
+    :vatPrice="vatPrice"
+    @createOrder="createOrder"
+  />
   <div class="bg-white w-4/5 m-auto rounded-xl shadow-xl mt-14">
-    <Header />
+    <Header :totalPrice="totalPrice" @open-drawer="openDrawer" />
     <div class="p-10">
       <div class="flex mb-8 items-center justify-between">
         <h2 class="text-3xl font-bold">Все кроссовки</h2>
@@ -115,7 +196,7 @@ watch(filters, fetchItems)
           </div>
         </div>
       </div>
-      <CardList :items="items" @addToFavorite="addToFavorite" />
+      <CardList :items="items" @add-to-cart="clickAddPlus" @addToFavorite="addToFavorite" />
     </div>
   </div>
 

@@ -6,9 +6,12 @@
       <p class="text-slate-400">Магазин кроссовок</p>
     </div>
     <ul class="flex items-center gap-10">
-      <li class="flex items-center gap-3 text-gray-500 hover:text-black cursor-pointer">
+      <li
+        @click="() => emit('openDrawer')"
+        class="flex items-center gap-3 text-gray-500 hover:text-black cursor-pointer"
+      >
         <img src="/cart.svg" alt="Cart" />
-        <span>1205</span>
+        <span>{{ totalPrice }} руб</span>
       </li>
       <li>
         <img src="/heart.svg" alt="Heart" />
@@ -22,6 +25,12 @@
   </header>
 </template>
 
-<script setup></script>
+<script setup>
+const props = defineProps({
+  totalPrice: Number
+})
+console.log(props.totalPrice)
+const emit = defineEmits(['openDrawer'])
+</script>
 
 <style lang="scss"></style>
