@@ -4,6 +4,7 @@
   >
     <div>
       <img
+        v-if="clickFavor"
         @click="clickFavor"
         :src="isFavorite ? '/like-2.svg' : '/like-1.svg'"
         alt="Favorite"
@@ -17,7 +18,12 @@
         <span class="text-slate-400">Цена:</span>
         <span class="font-bold">{{ price }}руб.</span>
       </div>
-      <img @click="clickAdd" :src="!isAdded ? '/plus.svg' : '/checked.svg'" alt="Plus" />
+      <img
+        v-if="clickAdd"
+        @click="clickAdd"
+        :src="!isAdded ? '/plus.svg' : '/checked.svg'"
+        alt="Plus"
+      />
     </div>
   </div>
 </template>
@@ -25,33 +31,33 @@
 <script setup>
 const props = defineProps({
   key: {
-    type: Number
+    type: Number,
   },
   imageUrl: {
-    type: String
+    type: String,
   },
   title: {
     type: String,
-    required: true
+    required: true,
   },
   price: {
     type: Number,
-    required: true
+    required: true,
   },
   isFavorite: {
     type: Boolean,
-    default: false
+    default: false,
   },
   isAdded: {
     type: Boolean,
-    default: false
+    default: false,
   },
   clickFavor: {
-    type: Function
+    type: Function,
   },
   clickAdd: {
-    type: Function
-  }
+    type: Function,
+  },
 })
 </script>
 

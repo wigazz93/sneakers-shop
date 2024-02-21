@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-4 gap-5">
+  <div class="grid grid-cols-4 gap-5" v-auto-animate>
     <Card
       v-for="item of items"
       :key="item.id"
@@ -7,8 +7,8 @@
       :imageUrl="item.imageUrl"
       :title="item.title"
       :isFavorite="item.isFavorite"
-      :clickFavor="() => emits('addToFavorite', item)"
-      :clickAdd="() => emits('addToCart', item)"
+      :clickFavor="isFavorites ? null : () => emits('addToFavorite', item)"
+      :clickAdd="isFavorites ? null : () => emits('addToCart', item)"
       :isAdded="item.isAdded"
     />
   </div>
@@ -20,7 +20,8 @@ const emits = defineEmits(['addToFavorite', 'addToCart'])
 defineProps({
   items: {
     type: Array,
-    required: true
-  }
+    required: true,
+  },
+  isFavorites: Boolean,
 })
 </script>
