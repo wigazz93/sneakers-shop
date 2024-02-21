@@ -45,8 +45,19 @@
           </div>
         </div>
       </div>
-      <div v-if="!totalPrice" class="flex h-full items-center">
-        <InfoBlock title="sdfdsc" description="sdsf" />
+      <div v-if="!totalPrice && !isOrdered" class="flex h-full items-center">
+        <InfoBlock
+          imageUrl="package-icon.png"
+          title="Корзина пуста"
+          description="Добавьте что-нибудь в корзину"
+        />
+      </div>
+      <div v-if="isOrdered" class="flex h-full items-center">
+        <InfoBlock
+          imageUrl="order-success-icon.png"
+          title="Заказ оформлен"
+          description="Спасибо за покупку"
+        />
       </div>
       <CartItemList v-if="totalPrice" />
     </div>
@@ -67,6 +78,8 @@ const props = defineProps({
 })
 const emit = defineEmits(['createOrder'])
 const isDisabled = ref(true)
+const isOrdered = ref(false)
+
 if (props.totalPrice > 0 || props.isCreateOrder) {
   isDisabled.value = false
 }
@@ -74,6 +87,7 @@ if (props.totalPrice > 0 || props.isCreateOrder) {
 const makeOrder = () => {
   emit('createOrder')
   isDisabled.value = true
+  isOrdered.value = true
 }
 </script>
 <style>
